@@ -1,0 +1,78 @@
+<html>
+	<head>
+        <title>Heartbeatmatch - Generate playlists based on your workout heartrate</title>
+		<link rel="stylesheet" href="{{ STATIC_URL }}heartbeatmatch/bootstrap/css/bootstrap.css" type="text/css" media="screen" />
+      	<link rel="stylesheet" href="{{ STATIC_URL }}heartbeatmatch/bootstrap/css/bootstrap-responsive.css" type="text/css" media="screen" />
+      	<link rel="stylesheet" href="{{ STATIC_URL }}heartbeatmatch/css/style.css" type="text/css" media="screen" />
+
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+		google.load('jquery',"1.7");
+		// Set a callback to run when the Google Visualization API is loaded.
+    </script>
+    <script src="{{ STATIC_URL }}heartbeatmatch//bootstrap/js/bootstrap.js"></script>
+      	
+	</head>
+	<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="/heartbeatmatch">Heartbeatmatch</a>
+          <ul class="nav pull-right">
+            <li><a href="#">Powered by:</a></li>
+        <li><a href="http://connect.garmin.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/garmin.ico" />Garmin Connect</a></li>
+            </li>
+            <li><a href="http://www.deezer.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/deezer.png" /> Deezer </a></li>
+        </ul>
+        </div>
+      </div>
+    </div>
+	<div class="container-fluid">
+  		<div class="row-fluid">
+  		<div class="hero-unit">
+  			<div class="urlform">
+		<div class="lefturlforminner"></div>	
+		<div class="urlforminner">
+			<h2 align="center">Heartbeatmatch - Follow your heart</h2>
+			<h4 align="center">Generate playlists based on your workout heartrate</h4>
+            <p>Enter the url of a <a href="http://connect.garmin.com" target="blank"> Garmin Connect activity </a>and Heartbeatmatch will create a <a href="http://www.deezer.com" target="blank">Deezer </a>playlist based on your heartrate. Matching the bpm of the songs to your workout heartrate.</p>
+			<form action="/heartbeatmatch/" class="form-inline" method="post">{% csrf_token %}
+  				<fieldset>
+    			<label><h5>Enter Url:</h5></label>
+    			{{URLForm}}
+			    <button type="submit" class="btn">Submit</button>
+          <span class="help-block">The activity should be open and unlocked</span>
+  				</fieldset>
+			</form>
+        <div id="myCarousel" class="carousel slide">
+          <!-- Carousel items -->
+          <div class="carousel-inner">
+            <div class="active item"><p align="center">Heartbeatmatch - follow your heart</p></div>
+            <div class="item"><p align="center">Moby once made a track called 1000 bpm, it's a bit shit</p></div>
+            <div class="item"><p align="center">The average human has around 2.5-3 billion heartbeats in his lifetime</p></div>
+            <div class="item"><p align="center">Each stroke of a heart pumps around 70 ml of blood through your body.</p></div>
+          </div>
+          <!-- Carousel nav -->
+          <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+          <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+        </div>
+        <p>
+          Heartbeat:<br />
+            <blockquote>The cardiac cycle is a term referring to all or any of the events related to the flow or blood pressure that occurs from the beginning of one heartbeat to the beginning of the next</blockquote></p>
+          </p>
+          <p>Beatmatching: <br />
+            <blockquote>Beatmatching [...] is a disc jockey technique of pitch shifting or timestretching a track to match its tempo to that of the currently playing track e.g. the kicks and snares in two house records hit at the same time when both records are played simultaneously.</blockquote>
+          </p>
+			</div>
+		  </div>
+      
+    </div>
+    <div id="footer">
+      <div class="container">
+        <p class="muted credit">Made by <a href="http://www.karltryggvason.com" target="blank">Karl Tryggvason</a> at <a href="http://london.musichackday.org/2012" target="blank">Music Hack Day - London 2012</a>
+        </p>
+      </div>
+  	</div>
+	</body>
+</html>
+

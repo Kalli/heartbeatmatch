@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+{% load jsonify %}
+
+<html>
+	<head>
+		<title>Heartbeatmatch - Generate playlists from your workout heartbeat</title>
+   		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>		
+		<script type="text/javascript">
+			google.load('jquery',"1.7");
+			google.load('visualization', '1.0', {'packages':['corechart','map']});
+			google.load('maps', '3.9',{other_params: "sensor=false"});
+		</script>
+
+		<link rel="stylesheet" href="{{ STATIC_URL }}heartbeatmatch/bootstrap/css/bootstrap.css" type="text/css" media="screen" />
+      	<link rel="stylesheet" href="{{ STATIC_URL }}heartbeatmatch/bootstrap/css/bootstrap-responsive.css" type="text/css" media="screen" />
+      	<link rel="stylesheet" href="{{ STATIC_URL }}heartbeatmatch/css/style.css" type="text/css" media="screen" />
+
+      	<script src="{{ STATIC_URL }}heartbeatmatch//bootstrap/js/bootstrap.js"></script>
+      	<script src="{{ STATIC_URL }}heartbeatmatch/js/dz.js"></script>
+		<script type="text/javascript">
+			{% autoescape off %}
+				var track= {{ track|to_json }}
+			{% endautoescape %}
+		</script>
+		<script>
+		var mapz;
+
+	    function draw2(){
+	    	var chartdata = new google.visualization.DataTable();
+		    chartdata.addColumn('number', 'Time');
+		  	chartdata.addColumn('number', 'HeartRate');
+		  	chartdata.addColumn({type:'string', role:'annotation'}); 
+		  	chartdata.addColumn({type:'string', role:'annotationText'}); 
+
+		    var options = {'title':'Heartrate', 'width': 470, 'height':300};
+	    	var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+        	var maptrack = [];
+        	var tunesIndex = 1;
+			chartdata.addRow([track["trackpoints"][0]["timedelta"],track["trackpoints"][0]["heartrate"], "1", track["tunes"][0]["artist"]["name"] + " - " +track["tunes"][0]["title"] + " - " + track["trackpoints"][0]["heartrate"]]);
+
+        	for (var i=1;i<track["trackpoints"].length-1;i++){
+				var trackpoint = track["trackpoints"][i];
+    			if (i%50==0){
+        			maptrack.push([Number(trackpoint["lat"]), Number(trackpoint["lon"]), trackpoint["timedelta"]]);
+    			}
+
+    			if (tunesIndex < track["tunes"].length){
+    				var tune = track["tunes"][tunesIndex];
+    				if(tune["playlistTime"] >= trackpoint["timedelta"] && tune["playlistTime"] <= track["trackpoints"][i+1]["timedelta"] ){
+	    				tunesIndex = tunesIndex+1;
+	    				chartdata.addRow([{v: trackpoint["timedelta"], f: trackpoint['time']} ,trackpoint["heartrate"],tunesIndex.toString(),tune["artist"]["name"] +" - "+ tune["title"]+" "+trackpoint["heartrate"]+" bpm"]);
+	    			}else{
+	    				chartdata.addRow([{v: trackpoint["timedelta"], f: trackpoint['time']} , trackpoint["heartrate"], null, null]);
+    				}
+    			}else{
+    				chartdata.addRow([{v: trackpoint["timedelta"], f: trackpoint['time']}, trackpoint["heartrate"], null, null]);
+    			}
+        	}
+
+        	var mapData = new google.visualization.DataTable();
+			mapData.addColumn('number','Lat');
+			mapData.addColumn('number','Lon');
+			mapData.addColumn('number','Time');
+			mapData.addRows(maptrack);
+			console.log(mapData);
+			var mapOptions = {zoom: 1, mapTypeId: google.maps.MapTypeId.ROADMAP, showLine: true}
+			var mapOptions = {zoom: 1, mapTypeId: 2, showLine: true}
+        	mapz = new google.visualization.Map(document.getElementById('map_div'));
+			mapz.draw(mapData, mapOptions);
+	    	chart.draw(chartdata, options);
+	    }
+
+    </script>
+	<script type="text/javascript" src="{{ STATIC_URL }}heartbeatmatch/js/heartbeatmatch.js" ></script>
+	</head>
+	<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="/heartbeatmatch">Heartbeatmatch</a>
+        	<ul class="nav pull-right">
+        		<li><a href="#">Powered by:</a></li>
+				<li><a href="http://connect.garmin.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/garmin.ico" />Garmin Connect</a></li>
+      			</li>
+      			<li><a href="http://www.deezer.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/deezer.png" /> Deezer </a></li>
+    		</ul>
+        </div>
+      </div>
+    </div>
+	<div class="container-fluid">
+  		<div class="row-fluid">
+  		<div class="hero-unit">
+  			<p>
+  			This is a Heartbeatmatch playlist based on a <a id="activity" href="{{ url }}" target="blank"> {{ track.activityType|lower }} activity  </a>
+  			</p>
+  			<p>
+  			<i class="icon-heart" id></i> {{ track.averageHeartrate }} average / {{ track.maxHeartrate }} max which makes for about {{track.heartbeats }} heartbeats in total <span id="heartrate"></span>  - That's pretty good!
+  			</p>
+  		</div>
+  		</div>
+
+  		<div class="row-fluid">
+			<div id="map_div" class="span12" style=""></div>
+  		</div>
+      		<div class="row-fluid">
+				<div id="chart_div" class="span6" style=""></div>  				
+				<div id="deezer" class="span6">
+
+  				<div id="dz-root"></div>
+        		<div id="player"></div>
+				</div>
+			</div>
+			<script type="text/javascript" src="{{ STATIC_URL }}heartbeatmatch/js/dzinit.js" ></script>
+			<script type="text/javascript">
+				var d = new Date("{{track.starttime}}");
+				var month = d.getMonth()+1;
+				var datestring = " from "+d.getDate()+"."+month+"."+d.getFullYear()+" -  "+	d.getHours() + ":"+ d.getMinutes();
+				$('#activity').append(datestring);
+	    
+			    var idx = 0;
+			    var elapsed = 0;
+			    DZ.Event.subscribe('player_position', function(pos){
+			    	elapsed = elapsed + 1;
+					if(track["trackpoints"][idx]["timedelta"]==elapsed){
+						$('#heartrate').text(track["trackpoints"][idx]["heartrate"])
+						$('#time').text(track["trackpoints"][idx]["timedelta"])
+						idx = idx+1;
+					}
+				});
+				$(window).load(function(){
+					findTuneByBPM(track["trackpoints"][0]["heartrate"],0);
+				})
+				</script>
+		</div>
+		</div>
+		  <div id="footer">
+		    <div class="container">
+		      <p class="muted credit">Made by <a href="http://www.karltryggvason.com" target="blank">Karl Tryggvason</a> at <a href="http://london.musichackday.org/2012" target="blank">Music Hack Day - London 2012</a>
+		      </p>
+		    </div>
+			</div>
+		</div>
+
+	</body>
+</html>
+
