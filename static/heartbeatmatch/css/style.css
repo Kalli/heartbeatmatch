@@ -1,4 +1,23 @@
+#loading{
+    text-align: center;
+}
+
 #map_div{
+    height: 300px;
+    padding: 10px;
+}
+
+.thumbnails{
+    display: none;
+}
+
+
+
+#info{
+    display: none;
+}
+
+#tomahk{
     height: 300px;
 }
 
@@ -17,32 +36,4 @@
 
 #id_url{
     width:50%;
-}
-
-.sm ul{
-    padding: 0 0 20px 0;
-}
-
-.sm ul li {
-    list-style :none;
-    padding: 0 0 0 4px;
-    float: left;
-}
-.sm ul li a {
-    /*text-indent: -9999px;*/
-    font-size: 0;
-    line-height: 0;
-    overflow: hidden ;
-    height: 16px;
-    width: 16px ;
-    border: 0;
-    background: url("http://www.karltryggvason.com/img/icons.png") no-repeat;
-    display: block;
-}
-#tw a {
-    background-position: -80px -0px;
-}
-
-.sm li#gh a {
-    background-position: -272px -480px;
 }

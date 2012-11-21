@@ -30,17 +30,18 @@ def track(request, url=""):
         params["url"] = url
         activity = url.split("/")[4][:9]
         tcx_url = "http://connect.garmin.com/proxy/activity-service-1.1/tcx/activity/" + activity + "?full=true"
+        print tcx_url
         page = urllib2.urlopen(tcx_url)
         params["track"] = parseXML(page)
     else:
         params["error"] = "Your URL wasn't a valid Garmin Connect URL"
     return render_to_response('hbm-track.html', params, context_instance=RequestContext(request))
-242104362
+
 
 def parseXML(page):
     timeformat = '%Y-%m-%dT%H:%M:%S.000Z'
     soup = BeautifulSoup(page)
-    track = {} 
+    track = {}
     startTime = time.mktime(time.strptime(soup.find('id').getText(), timeformat))
     track["starttime"] = soup.find('id').getText()
     trackpoints = []

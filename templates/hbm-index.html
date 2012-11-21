@@ -13,7 +13,7 @@
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-526010-4']);
-      _gaq.push(['_setDomainName', 'karltryggvason.com']);
+      _gaq.push(['_setDomainName', 'apps.karltryggvason.com']);
       _gaq.push(['_trackPageview']);
 
       (function() {
@@ -34,7 +34,8 @@
             <li><a href="#">Powered by:</a></li>
         <li><a href="http://connect.garmin.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/garmin.ico" />Garmin Connect</a></li>
             </li>
-            <li><a href="http://www.deezer.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/deezer.png" /> Deezer </a></li>
+            <li><a href="http://www.toma.hk" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/tomahk.ico" /> Toma.hk </a></li>
+            <li><a href="http://www.echonest.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/echonest.ico" />Echonest</a></li>
         </ul>
         </div>
       </div>
@@ -53,14 +54,19 @@
     			<label><h5>Enter Url:</h5></label>
     			{{URLForm}}
 			    <button type="submit" class="btn">Submit</button>
-          <span class="help-block">The activity should be open and unlocked</span>
+          <span class="help-block">
+              The activity should be open and unlocked
+          </span>
+          <span class="help-block"> 
+              Don't have any activities handy? <a href="/heartbeatmatch/track?url=http%3A//connect.garmin.com/activity/242104362">Try one of mine</a>.
+          </span>
   				</fieldset>
 			</form>
         <div id="myCarousel" class="carousel slide">
           <!-- Carousel items -->
           <div class="carousel-inner">
             <div class="active item"><p align="center">Heartbeatmatch - follow your heart</p></div>
-            <div class="item"><p align="center">Moby once made a track called 1000 bpm, it's a bit shit</p></div>
+            <div class="item"><p align="center">Moby once made a track that was 1000 bpm, it's a bit shit</p></div>
             <div class="item"><p align="center">The average human has around 2.5-3 billion heartbeats in his lifetime</p></div>
             <div class="item"><p align="center">Each stroke of a heart pumps around 70 ml of blood through your body.</p></div>
           </div>
