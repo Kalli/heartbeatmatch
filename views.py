@@ -4,9 +4,10 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 import urllib2
-from BeautifulSoup import BeautifulSoup
+from BeautifulSoup import BeautifulStoneSoup
 from forms import URLForm
 import time
+import sys
 
 
 def index(request):
@@ -40,7 +41,7 @@ def track(request, url=""):
 
 def parseXML(page):
     timeformat = '%Y-%m-%dT%H:%M:%S.000Z'
-    soup = BeautifulSoup(page)
+    soup = BeautifulStoneSoup(page)
     track = {}
     startTime = time.mktime(time.strptime(soup.find('id').getText(), timeformat))
     track["starttime"] = soup.find('id').getText()
@@ -50,17 +51,18 @@ def parseXML(page):
     track["activityType"] = soup.find("activity")["sport"]
     for trackpoint in soup.findAll("trackpoint"):
         try:
-            timestring = trackpoint.find("time").getText()
-            timestamp = time.mktime(time.strptime(timestring, timeformat))
-            timedelta = float((timestamp - startTime))
-            heartrate = int(trackpoint.find("heartratebpm").getText())
-            averageHeartrate = averageHeartrate + heartrate
-            if maxHeartrate < heartrate:
-                maxHeartrate = heartrate
-            point = {"time": timestring, "timedelta": timedelta, "heartrate": heartrate, "lat": trackpoint.find("latitudedegrees").getText(), "lon": trackpoint.find("longitudedegrees").getText()}
-            trackpoints.append(point)
+            if trackpoint.find("latitudedegrees") and trackpoint.find("longitudedegrees"):
+                timestring = trackpoint.find("time").getText()
+                timestamp = time.mktime(time.strptime(timestring, timeformat))
+                timedelta = float((timestamp - startTime))
+                heartrate = int(trackpoint.find("heartratebpm").getText())
+                averageHeartrate = averageHeartrate + heartrate
+                if maxHeartrate < heartrate:
+                    maxHeartrate = heartrate
+                point = {"time": timestring, "timedelta": timedelta, "heartrate": heartrate, "lat": trackpoint.find("latitudedegrees").getText(), "lon": trackpoint.find("longitudedegrees").getText()}
+                trackpoints.append(point)
         except Exception:
-            print "lala"
+            print "Unexpected error:", sys.exc_info()[0]
     track["trackpoints"] = trackpoints
     averageHeartrate = averageHeartrate / len(trackpoints)
     track["duration"] = trackpoints[len(trackpoints) - 1]["timedelta"]
