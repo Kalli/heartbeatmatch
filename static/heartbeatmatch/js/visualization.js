@@ -2,8 +2,8 @@ function drawChart(){
     var chartdata = new google.visualization.DataTable();
     chartdata.addColumn('number', 'Time');
     chartdata.addColumn('number', 'HeartRate');
-    chartdata.addColumn({type:'string', role:'annotation'}); 
-    chartdata.addColumn({type:'string', role:'annotationText'}); 
+    chartdata.addColumn({type:'string', role:'annotation'});
+    chartdata.addColumn({type:'string', role:'annotationText'});
 
     var chartOptions = {'title':'Heartrate', 'width': 450, 'height':300};
     var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
@@ -34,21 +34,25 @@ function drawChart(){
     
     chart.draw(chartdata, chartOptions);
 }
+var map;
+var runner;
 
 function drawMap(){
     var center = new google.maps.LatLng(track.trackpoints[0].lat, track.trackpoints[0].lon);
-
     var mapOptions = {
-        zoom: 12,
+        zoom: 15,
         mapTypeId: google.maps.MapTypeId.HYBRID,
         center: center,
         maxWidth:450
     };
-    var map = new google.maps.Map(document.getElementById('map_div'), mapOptions);
+    map = new google.maps.Map(document.getElementById('map_div'), mapOptions);
 
     var maptrack = [];
     var tunesIndex = 1;
     var trackTitle = track.tunes[0].artist + " - " +track.tunes[0].title + " - " + track.trackpoints[0].heartrate + " bpm";
+    track.tunes[0].lat = track.trackpoints[0].lat;
+    track.tunes[0].lon = track.trackpoints[0].lon;
+    track.tunes[0].trackPoint = 0;
     var trackPathPoints = [];
 
     for (var i=1;i<track.trackpoints.length-1;i++){
@@ -58,15 +62,17 @@ function drawMap(){
         if (tunesIndex < track.tunes.length){
             var tune = track.tunes[tunesIndex];
             if(tune.playlistTime >= trackpoint.timedelta && tune.playlistTime <= track.trackpoints[i+1].timedelta ){
+                track.tunes[tunesIndex].trackPoint = i;
                 trackTitle = track.tunes[tunesIndex].artist + " - " +track.tunes[tunesIndex].title + " - " + track.trackpoints[i].heartrate + " bpm";
                 track.tunes[tunesIndex].lat = trackpoint.lat;
                 track.tunes[tunesIndex].lon = trackpoint.lon;
-                tunesIndex = tunesIndex+1;   
+                tunesIndex = tunesIndex+1;
                 var marker = new google.maps.Marker({
                     map: map,
                     position: point,
-                    title: trackTitle 
-                    }); 
+                    title: trackTitle,
+                    zIndex:1
+                    });
             }
         }
     }
@@ -80,9 +86,14 @@ function drawMap(){
     var mapData = new google.visualization.DataTable();
     mapData.addColumn('number','Lat');
     mapData.addColumn('number','Lon');
-    mapData.addColumn({type:'string', role:'annotation'}); 
+    mapData.addColumn({type:'string', role:'annotation'});
     mapData.addRows(maptrack);
-
+    runner = new google.maps.Marker({
+        position: new google.maps.LatLng(track.trackpoints[0].lat, track.trackpoints[0].lon),
+        map: map,
+        icon: "http://apps.karltryggvason.com/static/heartbeatmatch/img/google_man.png",
+        zIndex:5
+    });
     trackPath.setMap(map);
-    // mapz.draw(mapData, mapOptions);
+    runner.setMap(map);
 }

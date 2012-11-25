@@ -4,17 +4,19 @@
 
 #map_div{
     height: 300px;
-    padding: 10px;
 }
 
 .thumbnails{
     display: none;
 }
 
-
+#controls{
+    display: none;
+}
 
 #info{
     display: none;
+    overflow: hidden;
 }
 
 #tomahk{
