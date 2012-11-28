@@ -8,6 +8,7 @@ from BeautifulSoup import BeautifulStoneSoup
 from forms import URLForm
 import time
 import sys
+import gc
 
 
 def index(request):
@@ -34,6 +35,10 @@ def track(request, url=""):
         print tcx_url
         page = urllib2.urlopen(tcx_url)
         params["track"] = parseXML(page)
+        page.close()
+        count = gc.get_count()
+        print("The count is")
+        print(count)
     else:
         params["error"] = "Your URL wasn't a valid Garmin Connect URL"
     return render_to_response('hbm-track.html', params, context_instance=RequestContext(request))
@@ -49,9 +54,10 @@ def parseXML(page):
     averageHeartrate = 0
     maxHeartrate = 0
     track["activityType"] = soup.find("activity")["sport"]
-    for trackpoint in soup.findAll("trackpoint"):
+    soupTrackpoints = soup.findAll("trackpoint")
+    for trackpoint in soupTrackpoints:
         try:
-            if trackpoint.find("latitudedegrees") and trackpoint.find("longitudedegrees"):
+            if trackpoint.find("latitudedegrees") and trackpoint.find("longitudedegrees") and trackpoint.find("time") and trackpoint.find("heartratebpm"):
                 timestring = trackpoint.find("time").getText()
                 timestamp = time.mktime(time.strptime(timestring, timeformat))
                 timedelta = float((timestamp - startTime))
@@ -61,6 +67,8 @@ def parseXML(page):
                     maxHeartrate = heartrate
                 point = {"time": timestring, "timedelta": timedelta, "heartrate": heartrate, "lat": trackpoint.find("latitudedegrees").getText(), "lon": trackpoint.find("longitudedegrees").getText()}
                 trackpoints.append(point)
+                trackpoint.decompose()
+                trackpoint.extract()
         except Exception:
             print "Unexpected error:", sys.exc_info()[0]
     track["trackpoints"] = trackpoints
@@ -69,4 +77,7 @@ def parseXML(page):
     track["maxHeartrate"] = maxHeartrate
     track["averageHeartrate"] = averageHeartrate
     track["heartbeats"] = averageHeartrate * track["duration"] / 60
+    soup.decompose()
+    soup.close()
+    gc.collect()
     return track
