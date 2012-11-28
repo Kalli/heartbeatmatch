@@ -6,3 +6,5 @@ local_settings.py
 static/.DS_Store
 
 static/heartbeatmatch/.DS_Store
+
+static/heartbeatmatch/activity_242104362.tcx

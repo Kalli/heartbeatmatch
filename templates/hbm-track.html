@@ -51,9 +51,21 @@
 				<li><a href="http://connect.garmin.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/garmin.ico" />Garmin Connect</a></li>
       			</li>
       			<li><a href="http://www.toma.hk" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/tomahk.ico" /> Toma.hk </a></li>
-                <li><a href="http://www.echonest.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/echonest.ico" />Echonest</a></li>
+                <li><a href="http://echonest.com" target="blank"><img class="img-circle" src="{{ STATIC_URL }}heartbeatmatch/img/echonest.ico" />Echonest</a></li>
     		</ul>
         </div>
+<!--         <div class="container-fluid">
+          <div id="controls">
+            <div class="span2">
+            <i id="controlsback" class="icon-backward icon-white"></i>
+            <i id="controlsplay" class="icon-play icon-white"></i>
+            <i id="controlsfwd" class="icon-forward icon-white"></i>
+            </div>
+            <div class="progress">
+              <div id="progressbar" class="bar" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div> -->
       </div>
     </div>
 	<div class="container-fluid">
@@ -96,30 +108,16 @@
             </li>
             <li class="span6">
                 <div class="caption"><h3>Tracklist</h3></div>
-                <div id="playlist" class="thumbnail"></div>
+                <div id="playlist"></div>
             </li> 
         </ul>    
-        </div>    
-        <!-- <div class="row-fluid">
-			<div id="cont" class="span12" style="">
-                <div id="chart_div" class="span6" style=""></div>                        
-                <div id="tomahk" class="span6"></div>
-                <div id="loading" class="span12">
-                    <img width="57" height="93" src="{{ STATIC_URL }}heartbeatmatch/img/heartbeat.gif" />
-                    <p class="lead">Populating playlist... Please wait!</p>
-                </div>
-            </div>
-  		</div>
-  		<div class="row-fluid">    
-            <div id="map_div" class="span6" style=""></div>
-            <div id="playlist" class="span6"></div>
-		</div> -->
-	</div>
+        </div>
+  </div>
     <script type="text/javascript">
         var d = new Date("{{track.starttime}}");
         var month = d.getMonth()+1;
         var datestring = "<li>The activity took place on "+d.getDate()+"."+month+"."+d.getFullYear()+"</li>";
-        datestring +="<li>Starting at "+ d.getHours() + ":"+ d.getMinutes()+"</li>"
+        datestring +="<li>It started at "+ d.getHours() + ":"+ d.getMinutes()+"</li>"
         $('#timeinfo').append(datestring);
         var end = new Date(track.trackpoints[track.trackpoints.length-1].time);
         var delta = Math.round((end.valueOf() - d.valueOf())/60000);
@@ -129,6 +127,7 @@
         $(window).load(function(){
             findTuneByBPM(track["trackpoints"][0]["heartrate"],0);
         })
+        var nowplaying = 0;
     </script>      
 		<div id="footer">
 		    <div class="container">
@@ -137,7 +136,6 @@
 		    </div>
 			</div>
 		</div>
-
 	</body>
 </html>
 
